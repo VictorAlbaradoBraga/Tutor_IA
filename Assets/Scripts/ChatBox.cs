@@ -74,6 +74,34 @@ public class ChatBox : MonoBehaviour
     {
         AddMessageToChat("IA: " + response, Color.white); // Mensagem da IA em verde
     }
+    // Retorna o histórico de mensagens em formato para a IA
+    public List<NPCVoice.AIMessage> GetFormattedMessages()
+    {
+        List<NPCVoice.AIMessage> aiMessages = new List<NPCVoice.AIMessage>();
+
+        foreach (Message msg in messageList)
+        {
+            if (msg.text.StartsWith("Você: "))
+            {
+                aiMessages.Add(new NPCVoice.AIMessage
+                {
+                    role = "user",
+                    content = msg.text.Substring(6) // Remove "Você: "
+                });
+            }
+            else if (msg.text.StartsWith("IA: "))
+            {
+                aiMessages.Add(new NPCVoice.AIMessage
+                {
+                    role = "assistant",
+                    content = msg.text.Substring(4) // Remove "IA: "
+                });
+            }
+        }
+
+        return aiMessages;
+    }
+
 }
 
 [System.Serializable]
