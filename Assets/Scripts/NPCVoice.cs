@@ -6,6 +6,9 @@ using System.Text;
 
 public class NPCVoice : MonoBehaviour
 {
+
+    public AnimatorController animatorController;//para transitar entre as animações de acordo com a fala
+
     [Header("Configurações da IA")]
     string apiKey = "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";
     public string model = "llama3-70b-8192";
@@ -158,6 +161,11 @@ public class NPCVoice : MonoBehaviour
         if (textToSpeech != null)
         {
             textToSpeech.Speak(text);
+        }
+
+        if (animatorController != null)
+        {
+            animatorController.TextToAnimation(text);
         }
     }
 }
