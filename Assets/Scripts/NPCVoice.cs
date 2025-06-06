@@ -7,10 +7,10 @@ using System.Text;
 public class NPCVoice : MonoBehaviour
 {
 
-    public AnimatorController animatorController;//para transitar entre as animações de acordo com a fala
+    //public AnimatorController animatorController;//para transitar entre as animações de acordo com a fala
 
     [Header("Configurações da IA")]
-    string apiKey = "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";
+    string apiKey = "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";
     public string model = "llama3-70b-8192";
     public TextToSpeech textToSpeech;
     public ChatBox chatBox;
@@ -163,9 +163,9 @@ public class NPCVoice : MonoBehaviour
             textToSpeech.Speak(text);
         }
 
-        if (animatorController != null)
+        /*if (animatorController != null)
         {
             animatorController.TextToAnimation(text);
-        }
+        }*/
     }
 }
