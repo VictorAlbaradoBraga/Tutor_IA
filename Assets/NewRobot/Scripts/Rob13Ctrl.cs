@@ -52,6 +52,8 @@ public class Rob13Ctrl : MonoBehaviour
          9.Love
      */
 
+    public NPCVoice npcVoice;
+
     public int GetNextNumber(int N)
     {
         int result = currentNumber;
@@ -132,79 +134,114 @@ public class Rob13Ctrl : MonoBehaviour
             anim.SetBool("FallBack", true);
             setEmotion(5);
         }
+    }
 
+    public void ChangeEmotionFromSpeech(string AIResponse) //muda emoções de acordo com a fala da IA, muda pelo npc voice
+    {
+        AIResponse = AIResponse.ToLower();
 
-        //---------------------------------------- EMOTIONS -----------------
-
-        if (Input.GetKeyDown(KeyCode.Backspace))
-        {
-            resetEmo();
-
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        //raiva, chorando, apaixonado, rindo
+        /*if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             anim.SetBool("Angry", true);
             setEmotion(7);
-        }
+        }//raiva
+
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             anim.SetBool("Cry", true);
             setEmotion(8);
-        }
+        }//chorando
+
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             anim.SetBool("Thumb", true);
             setEmotion(9);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            anim.SetBool("Win", true);
-            setEmotion(1);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha5))
-        {
-            anim.SetBool("DontKnow", true);
-            setEmotion(3);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha6))
-        {
-            anim.SetBool("Hello", true);
-            setEmotion(0);
-        }
+        }//apaixonado
+        
         if (Input.GetKeyDown(KeyCode.Alpha7))
         {
             anim.SetBool("Laught", true);
             setEmotion(1);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha8))
+        }//rindo
+         
+         */
+
+        //-------------------------------EMOÇÕES DE FELICIDADE, SUCESSO------------------------------------
+        if (AIResponse.Contains("muito bem") || AIResponse.Contains("bom trabalho") ||
+            AIResponse.Contains("boa") || AIResponse.Contains("ótimo") ||
+            AIResponse.Contains("excelente"))
         {
-            anim.SetBool("LookingFor", true);
-            setEmotion(4);
+            anim.SetBool("Win", true);
+            setEmotion(1);
+            StartCoroutine(PlayAnimationMultipleTimes());
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha9))
+
+        //dancinha básica
+        if (AIResponse.Contains("mandou bem") || AIResponse.Contains("arrasou") || AIResponse.Contains("incrível") ||
+            AIResponse.Contains("fantástico") || AIResponse.Contains("sensacional") || AIResponse.Contains("sucesso") ||
+            AIResponse.Contains("palmas pra você") || AIResponse.Contains("estou orgulhoso"))
         {
             animationName = "Dance0";
             robotColorManager.isRainbowCycles = true;
             setEmotion(1);
             StartCoroutine(PlayAnimationMultipleTimes());
         }
-        if (Input.GetKeyDown(KeyCode.Alpha0))
+
+
+        //dança que gira gira gira
+        if (AIResponse.Contains("parabéns") || AIResponse.Contains("que maravilha") || AIResponse.Contains("você conseguiu") ||
+            AIResponse.Contains("arrasou demais") || AIResponse.Contains("inacreditável") ||
+            AIResponse.Contains("incrível demais") || AIResponse.Contains("orgulho define") || AIResponse.Contains("é isso!") ||
+            AIResponse.Contains("uau"))
         {
             animationName = "Dance1";
             robotColorManager.isRainbowCycles = true;
             setEmotion(1);
             StartCoroutine(PlayAnimationMultipleTimes());
         }
-        if (Input.GetKeyDown(KeyCode.T))
+
+
+        //----------------------------------------OUTRAS---------------------------------
+
+        //Não sabe
+        if (AIResponse.Contains("eu não sei") || AIResponse.Contains("não entendi"))
         {
-            anim.SetBool("Talk", true);
-            ToggleObjectActiveState();
+            anim.SetBool("DontKnow", true);
+            setEmotion(3);
+        }
+
+        //Saudação e despedida
+        if (AIResponse.Contains("olá") || AIResponse.Contains("bem vindo") || AIResponse.Contains("oi") ||
+            AIResponse.Contains("bom dia") || AIResponse.Contains("boa tarde") || AIResponse.Contains("boa noite") ||
+            AIResponse.Contains("tchau") || AIResponse.Contains("até mais") || AIResponse.Contains("até logo") ||
+            AIResponse.Contains("até breve") || AIResponse.Contains("até a próxima") || AIResponse.Contains("nos vemos em breve") ||
+            AIResponse.Contains("volte sempre") || AIResponse.Contains("até depois") || AIResponse.Contains("foi um prazer lhe ajudar") || AIResponse.Contains("foi um prazer te ajudar") ||
+            AIResponse.Contains("foi um prazer ajudar") || AIResponse.Contains("tenha bons estudos!") ||
+            AIResponse.Contains("seja bem-vindo") || AIResponse.Contains("seja bem-vinda"))
+        {
+            anim.SetBool("Hello", true);
             setEmotion(0);
         }
 
+        //procurando
+        if (AIResponse.Contains("você deve encontrar") || AIResponse.Contains("você deve descobrir") || AIResponse.Contains("você deve procurar"))
+        {
+            anim.SetBool("LookingFor", true);
+            setEmotion(4);
+        }
+
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            anim.SetBool("Talk", true); //falandooo
+            ToggleObjectActiveState();
+            setEmotion(0);
+        }
+    }
+
+    /*public void Moviments() 
+    {
         if (Input.GetKeyDown(KeyCode.H))
         {
             anim.SetBool("Hit", true);
@@ -228,9 +265,7 @@ public class Rob13Ctrl : MonoBehaviour
         {
             anim.SetBool("StrafeRight", false);
         }
-
-
-    }
+    }*/
 
     public void setEmotion(int emoNumber)
     {
@@ -261,6 +296,13 @@ public class Rob13Ctrl : MonoBehaviour
         anim.SetBool("reset", true);
         resetEmo();
         Debug.Log("Animation Done");
+
+        //Verifica se o NPC ainda está falando
+        if (npcVoice != null && npcVoice.isSpeaking)
+        {
+            anim.SetBool("Talk", true);
+            setEmotion(0);
+        }
     }
 
     void ToggleObjectActiveState()

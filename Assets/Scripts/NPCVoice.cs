@@ -7,7 +7,8 @@ using System.Text;
 public class NPCVoice : MonoBehaviour
 {
 
-    //public AnimatorController animatorController;//para transitar entre as animações de acordo com a fala
+    public Rob13Ctrl robotController;//para transitar entre as animações/emoçoes de acordo com a fala
+    public bool isSpeaking = false; //detecta se tá falando
 
     [Header("Configurações da IA")]
     string apiKey = "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";
@@ -163,9 +164,9 @@ public class NPCVoice : MonoBehaviour
             textToSpeech.Speak(text);
         }
 
-        /*if (animatorController != null)
+        if (robotController != null)
         {
-            animatorController.TextToAnimation(text);
-        }*/
+            robotController.ChangeEmotionFromSpeech(text);
+        }
     }
 }
