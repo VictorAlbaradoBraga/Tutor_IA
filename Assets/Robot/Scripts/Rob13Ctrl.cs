@@ -16,14 +16,14 @@ public class Rob13Ctrl : MonoBehaviour
 
     public Rob13ColorManager robotColorManager;
     public EmotionChanger emotionChanger;
-   // public PushDetection pushDetection;
+    // public PushDetection pushDetection;
 
     [Header("Repeat time for some animations")]
-    public int playCount = 1; // Cyclyc Animations repeat time
+    public int playCount = 2; // Cyclyc Animations repeat time
     private int currentPlayCount = 0;
 
     private int currentNumber = 0; //
-    int N = 2;             
+    int N = 2;
 
     private string animationName = "YourAnimationName";
     private bool battleIsActive = false;
@@ -71,105 +71,17 @@ public class Rob13Ctrl : MonoBehaviour
 
     void Update()
     {
-        anim.SetFloat("Side", Input.GetAxis("Horizontal"));
-        anim.SetFloat("Speed", Input.GetAxis("Vertical"));
-
-        if (Input.GetKey(KeyCode.LeftShift) && (run < 1))
-        {
-
-            run += Time.deltaTime * runVelocity;
-            anim.SetFloat("run", run);
-        }
-        else
-        {
-            if (run > 0)
-            {
-                run -= Time.deltaTime * runVelocity;
-            }
-            anim.SetFloat("run", run);
-        }
-/*
-        if (pushDetection != null && pushDetection.isPushing)
-        {
-            if (Input.GetAxis("Vertical")>0.1)
-            {
-                anim.SetBool("Push", true);
-                setEmotion(6);
-            }
-            if (Input.GetAxis("Vertical") < 0.1)
-            {
-                anim.SetBool("Push", false);
-                resetEmo();
-            }
-        }
-*/
-
-        if (Input.GetKeyDown(KeyCode.RightBracket))
-        {
-            emo_i++;
-            if (emo_i == 10) { emo_i = 0; }
-            setEmotion(emo_i);
-        }
-        if (Input.GetKeyDown(KeyCode.LeftBracket))
-        {
-            emo_i--;
-            if (emo_i == 0) { emo_i = 10; }
-            setEmotion(emo_i - 1);
-        }
-
-      
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            anim.SetBool("Jump", true);
-            //anim.SetInteger("vary", GetNextNumber(2));
-        }
-//-------------------------------- DEATH and falling --------------------------------------
-        if (Input.GetKeyDown(KeyCode.U))
-        {
-            anim.SetBool("FallFront", true);
-            setEmotion(5);
-        }
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            anim.SetBool("FallBack", true);
-            setEmotion(5);
-        }
+        anim.SetFloat("Side", Input.GetAxis("Horizontal")); //movimento lateral com setas <- ->
+        anim.SetFloat("Speed", Input.GetAxis("Vertical")); //movimento vertical com setas p cima e p baixo
     }
 
     public void ChangeEmotionFromSpeech(string AIResponse) //muda emoções de acordo com a fala da IA, muda pelo npc voice
     {
         AIResponse = AIResponse.ToLower();
 
-        //raiva, chorando, apaixonado, rindo
-        /*if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            anim.SetBool("Angry", true);
-            setEmotion(7);
-        }//raiva
-
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            anim.SetBool("Cry", true);
-            setEmotion(8);
-        }//chorando
-
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            anim.SetBool("Thumb", true);
-            setEmotion(9);
-        }//apaixonado
-        
-        if (Input.GetKeyDown(KeyCode.Alpha7))
-        {
-            anim.SetBool("Laught", true);
-            setEmotion(1);
-        }//rindo
-         
-         */
-
         //-------------------------------EMOÇÕES DE FELICIDADE, SUCESSO------------------------------------
         if (AIResponse.Contains("muito bem") || AIResponse.Contains("bom trabalho") ||
-            AIResponse.Contains("boa") || AIResponse.Contains("ótimo") ||
+            AIResponse.Contains("boa performance") || AIResponse.Contains("ótimo") ||
             AIResponse.Contains("excelente"))
         {
             anim.SetBool("Win", true);
@@ -180,7 +92,7 @@ public class Rob13Ctrl : MonoBehaviour
 
         //dancinha básica
         if (AIResponse.Contains("mandou bem") || AIResponse.Contains("arrasou") || AIResponse.Contains("incrível") ||
-            AIResponse.Contains("fantástico") || AIResponse.Contains("sensacional") || AIResponse.Contains("sucesso") ||
+            AIResponse.Contains("fantástico") || AIResponse.Contains("sensacional") ||
             AIResponse.Contains("palmas pra você") || AIResponse.Contains("estou orgulhoso"))
         {
             animationName = "Dance0";
@@ -193,7 +105,7 @@ public class Rob13Ctrl : MonoBehaviour
         //dança que gira gira gira
         if (AIResponse.Contains("parabéns") || AIResponse.Contains("que maravilha") || AIResponse.Contains("você conseguiu") ||
             AIResponse.Contains("arrasou demais") || AIResponse.Contains("inacreditável") ||
-            AIResponse.Contains("incrível demais") || AIResponse.Contains("orgulho define") || AIResponse.Contains("é isso!") ||
+            AIResponse.Contains("incrível demais") || AIResponse.Contains("que orgulho") || AIResponse.Contains("é isso!") ||
             AIResponse.Contains("uau"))
         {
             animationName = "Dance1";
@@ -240,42 +152,15 @@ public class Rob13Ctrl : MonoBehaviour
         }
     }
 
-    /*public void Moviments() 
-    {
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-            anim.SetBool("Hit", true);
-            anim.SetInteger("vary", GetNextNumber(3));
-            setEmotion(0);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            anim.SetBool("StrafeLeft", true);
-        }
-        if (Input.GetKeyUp(KeyCode.Q))
-        {
-            anim.SetBool("StrafeLeft", false);
-        }
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            anim.SetBool("StrafeRight", true);
-        }
-        if (Input.GetKeyUp(KeyCode.E))
-        {
-            anim.SetBool("StrafeRight", false);
-        }
-    }*/
-
     public void setEmotion(int emoNumber)
     {
         if (battleIsActive)
         {
             emoNumber = 7;
         }
-            robotColorManager.ChangeBodyColor(emoNumber);
-            emotionChanger.SetEmotionEyes(emoNumber);
-            emotionChanger.SetEmotionMouth(emoNumber);
+        robotColorManager.ChangeBodyColor(emoNumber);
+        emotionChanger.SetEmotionEyes(emoNumber);
+        emotionChanger.SetEmotionMouth(emoNumber);
     }
 
     public void Speech3End()
@@ -309,9 +194,9 @@ public class Rob13Ctrl : MonoBehaviour
     {
         if ((MouthEmo != null) && (MouthSpeech != null))
         {
-            bool isActive = MouthEmo.activeSelf;  
+            bool isActive = MouthEmo.activeSelf;
             bool isActiveS = MouthSpeech.activeSelf;
-            MouthEmo.SetActive(!isActive); 
+            MouthEmo.SetActive(!isActive);
             MouthSpeech.SetActive(!isActiveS);
         }
         else
@@ -328,3 +213,128 @@ public class Rob13Ctrl : MonoBehaviour
 
 }
 
+/* ------------------------------------------------EMOÇÕES/MOVIMENTAÇÕES RETIRADAS ATÉ O MOMENTO POR FALTA DE CONTEXTO P UTILIZAÇÃO
+ 
+//raiva
+if (Input.GetKeyDown(KeyCode.Alpha1))
+{
+     anim.SetBool("Angry", true);
+     setEmotion(7);
+}
+
+//chorando
+if (Input.GetKeyDown(KeyCode.Alpha2))
+{
+     anim.SetBool("Cry", true);
+     setEmotion(8);
+}
+
+//apaixonado
+if (Input.GetKeyDown(KeyCode.Alpha3))
+{
+     anim.SetBool("Thumb", true);
+     setEmotion(9);
+}
+      
+//rindo
+if (Input.GetKeyDown(KeyCode.Alpha7))
+{
+      anim.SetBool("Laught", true);
+      setEmotion(1);
+}
+   
+
+//ao pressionar shift + alguma ação de movimento, ele corre, aumenta velocidade
+if (Input.GetKey(KeyCode.LeftShift) && (run < 1))
+{
+     run += Time.deltaTime * runVelocity;
+     anim.SetFloat("run", run);
+}
+else
+{
+    if (run > 0)
+    {
+         run -= Time.deltaTime * runVelocity;
+    }
+    anim.SetFloat("run", run);
+}
+
+
+if (pushDetection != null && pushDetection.isPushing)
+{
+    if (Input.GetAxis("Vertical")>0.1)
+    {
+        anim.SetBool("Push", true);
+        setEmotion(6);
+    }
+    if (Input.GetAxis("Vertical") < 0.1)
+    {
+        anim.SetBool("Push", false);
+        resetEmo();
+    }
+}
+
+
+//troca de emoção ao digitar colchete, passa de emoção por emoção
+if (Input.GetKeyDown(KeyCode.RightBracket))
+{
+    emo_i++;
+    if (emo_i == 10) { emo_i = 0; }
+    setEmotion(emo_i);
+}
+if (Input.GetKeyDown(KeyCode.LeftBracket))
+{
+    emo_i--;
+    if (emo_i == 0) { emo_i = 10; }
+    setEmotion(emo_i - 1);
+}
+
+
+//pular
+if (Input.GetKeyDown(KeyCode.Space))
+{
+    anim.SetBool("Jump", true);
+    //anim.SetInteger("vary", GetNextNumber(2));
+}
+
+//morrer e cair
+if (Input.GetKeyDown(KeyCode.U))
+{
+    anim.SetBool("FallFront", true);
+    setEmotion(5);
+}
+if (Input.GetKeyDown(KeyCode.I))
+{
+    anim.SetBool("FallBack", true);
+    setEmotion(5);
+}
+
+
+//robô tapeado
+if (Input.GetKeyDown(KeyCode.H))
+{
+     anim.SetBool("Hit", true);
+     anim.SetInteger("vary", GetNextNumber(3));
+     setEmotion(0);
+}
+
+//anda de ladinho p esquerda
+if (Input.GetKeyDown(KeyCode.Q))
+{
+            anim.SetBool("StrafeLeft", true);
+}
+if (Input.GetKeyUp(KeyCode.Q))
+{
+            anim.SetBool("StrafeLeft", false);
+}
+
+//anda de ladinho p direita
+if (Input.GetKeyDown(KeyCode.E))
+{
+     anim.SetBool("StrafeRight", true);
+}
+if (Input.GetKeyUp(KeyCode.E))
+{
+    anim.SetBool("StrafeRight", false);
+}
+*/

@@ -11,7 +11,7 @@ public class NPCVoice : MonoBehaviour
     public bool isSpeaking = false; //detecta se tá falando
 
     [Header("Configurações da IA")]
-    string apiKey = "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";
+    string apiKey = "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";
     public string model = "llama3-70b-8192";
     public TextToSpeech textToSpeech;
     public ChatBox chatBox;
