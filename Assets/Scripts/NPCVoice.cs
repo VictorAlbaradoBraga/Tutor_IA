@@ -83,8 +83,17 @@ public class NPCVoice : MonoBehaviour
             "Nunca utilize caracteres especiais como asteriscos, emojis ou símbolos para formatar palavras (ex: **negrito**, _itálico_). Fale apenas com texto puro para facilitar a leitura por voz (TTS)."
 
 
-    });
+        });
 
+    }
+
+    private void Update()
+    {
+        
+        if (textToSpeech != null)
+        {
+            isSpeaking = textToSpeech.isSpeaking;
+        }
     }
 
     public void StartSpeechToIAProcess(string recognizedSpeech)

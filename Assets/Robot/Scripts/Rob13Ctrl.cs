@@ -73,6 +73,14 @@ public class Rob13Ctrl : MonoBehaviour
     {
         anim.SetFloat("Side", Input.GetAxis("Horizontal")); //movimento lateral com setas <- ->
         anim.SetFloat("Speed", Input.GetAxis("Vertical")); //movimento vertical com setas p cima e p baixo
+
+        //Verifica se o NPC ainda está falando
+        if (npcVoice != null && npcVoice.isSpeaking)
+        {
+            anim.SetBool("Talk", true); //falandooo
+            ToggleObjectActiveState();
+            setEmotion(0);
+        }
     }
 
     public void ChangeEmotionFromSpeech(string AIResponse) //muda emoções de acordo com a fala da IA, muda pelo npc voice
@@ -144,12 +152,6 @@ public class Rob13Ctrl : MonoBehaviour
             setEmotion(4);
         }
 
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            anim.SetBool("Talk", true); //falandooo
-            ToggleObjectActiveState();
-            setEmotion(0);
-        }
     }
 
     public void setEmotion(int emoNumber)
@@ -181,13 +183,6 @@ public class Rob13Ctrl : MonoBehaviour
         anim.SetBool("reset", true);
         resetEmo();
         Debug.Log("Animation Done");
-
-        //Verifica se o NPC ainda está falando
-        if (npcVoice != null && npcVoice.isSpeaking)
-        {
-            anim.SetBool("Talk", true);
-            setEmotion(0);
-        }
     }
 
     void ToggleObjectActiveState()

@@ -9,6 +9,42 @@ public class TextToSpeech : MonoBehaviour
 {
     [SerializeField] private string apiKey = "AIzaSyCRStxPkj-b0ufYOrLemn3mvKLO_y2LTe0"; // Sua API Key do Google Cloud
 
+    AudioSource audioSource;
+    private float previousTime = 0f;
+    public bool isSpeaking = false;
+
+    private void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
+    }
+    private void Update()
+    {
+        if (audioSource != null)
+        {
+            if (audioSource.isPlaying)
+            {
+                // Detecta o início da reprodução
+                if (audioSource.time > 0 && previousTime == 0)
+                {
+                    Debug.Log("AudioSource começou a tocar");
+                    isSpeaking = true;
+
+                }
+
+                // Detecta o fim da reprodução (ou o momento em que o tempo volta ao zero)
+                if (audioSource.time == 0 && previousTime > 0)
+                {
+                    Debug.Log("AudioSource terminou de tocar");
+                    isSpeaking = false;
+
+                }
+            }
+
+            previousTime = audioSource.time;
+        }
+    }
     public void Speak(string text)
     {
         if (string.IsNullOrEmpty(text))
@@ -83,13 +119,13 @@ public class TextToSpeech : MonoBehaviour
             }
 
             AudioClip clip = DownloadHandlerAudioClip.GetContent(www);
-            AudioSource audioSource = GetComponent<AudioSource>();
+            /*AudioSource audioSource = GetComponent<AudioSource>();
             if (audioSource == null)
-                audioSource = gameObject.AddComponent<AudioSource>();
+                audioSource = gameObject.AddComponent<AudioSource>();*/
 
             audioSource.clip = clip;
 
-            
+
             audioSource.Play();
         }
     }
