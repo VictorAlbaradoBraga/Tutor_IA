@@ -8,7 +8,6 @@ public class NPCVoice : MonoBehaviour
 {
 
     public Rob13Ctrl robotController;//para transitar entre as animações/emoçoes de acordo com a fala
-    public bool isSpeaking = false; //detecta se tá falando
 
     [Header("Configurações da IA")]
     string apiKey = "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";
@@ -84,16 +83,6 @@ public class NPCVoice : MonoBehaviour
 
 
         });
-
-    }
-
-    private void Update()
-    {
-        
-        if (textToSpeech != null)
-        {
-            isSpeaking = textToSpeech.isSpeaking;
-        }
     }
 
     public void StartSpeechToIAProcess(string recognizedSpeech)

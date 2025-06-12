@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.EventSystems;
 
 public class Rob13Ctrl : MonoBehaviour
@@ -32,9 +34,6 @@ public class Rob13Ctrl : MonoBehaviour
     private bool isFalling = false;
     private Vector3 moveDirection;
 
-
-    int emo_i = 0;
-
     Animator anim;
     CharacterController controller;
 
@@ -52,40 +51,75 @@ public class Rob13Ctrl : MonoBehaviour
          9.Love
      */
 
-    public NPCVoice npcVoice;
-
-    public int GetNextNumber(int N)
-    {
-        int result = currentNumber;
-        currentNumber = (currentNumber + 1) % (N + 1); // Increase and reset if exceeds N
-        Debug.Log(result);
-        return result;
-    }
+    //itens para animações de fala e etc
+    private bool isTalking = false; // Para controlar o estado da fala
+    private bool isAnimationPlaying = false; // Para garantir que a animação de fala só comece após outras animações
+    public TextToSpeech txtToSpeech;
 
     void Start()
     {
         anim = GetComponent<Animator>();
         controller = GetComponent<CharacterController>();
         anim.SetFloat("speedMultiplier", speed);
+        txtToSpeech = GetComponent<TextToSpeech>();
     }
 
     void Update()
     {
-        anim.SetFloat("Side", Input.GetAxis("Horizontal")); //movimento lateral com setas <- ->
-        anim.SetFloat("Speed", Input.GetAxis("Vertical")); //movimento vertical com setas p cima e p baixo
-
-        //Verifica se o NPC ainda está falando
-        if (npcVoice != null && npcVoice.isSpeaking)
+        // Verificar se já existe uma animação em andamento
+        if (!isAnimationPlaying && isTalking && !anim.GetCurrentAnimatorStateInfo(0).IsName("Talk"))
         {
-            anim.SetBool("Talk", true); //falandooo
+            // Se não houver animação tocando, executa a animação de fala
+            anim.SetBool("Talk", true);
             ToggleObjectActiveState();
             setEmotion(0);
+            isAnimationPlaying = true;
         }
+
+        // Lógica para parar a animação de fala quando o áudio terminar
+        if (isTalking && !txtToSpeech.isSpeaking)
+        {
+            anim.SetBool("Talk", false);
+            ToggleObjectActiveState();
+            isAnimationPlaying = false;
+            isTalking = false;
+        }
+    }
+
+    public void StartTalking()
+    {
+        isTalking = true;  // Ativa o estado de fala
+        if (!isAnimationPlaying)
+        {
+            anim.SetBool("Talk", true); // Inicia animação de fala
+        }
+    }
+
+    public void StopTalking()
+    {
+        isTalking = false; // Desativa o estado de fala
+        anim.SetBool("Talk", false); // Para a animação de fala
+        ToggleObjectActiveState();
+        isAnimationPlaying = false; // Define que não há animação em execução
     }
 
     public void ChangeEmotionFromSpeech(string AIResponse) //muda emoções de acordo com a fala da IA, muda pelo npc voice
     {
         AIResponse = AIResponse.ToLower();
+
+
+        //Saudação e despedida
+        if (ContainsInFirstSentence(AIResponse, "olá") || ContainsInFirstSentence(AIResponse, "bem vindo") || ContainsInFirstSentence(AIResponse, "oi") ||
+            ContainsInFirstSentence(AIResponse, "bom dia") || ContainsInFirstSentence(AIResponse, "boa tarde") || ContainsInFirstSentence(AIResponse, "boa noite") ||
+            ContainsInFirstSentence(AIResponse, "tchau") || ContainsInFirstSentence(AIResponse, "até mais") || ContainsInFirstSentence(AIResponse, "até logo") ||
+            ContainsInFirstSentence(AIResponse, "até breve") || ContainsInFirstSentence(AIResponse, "até a próxima") || ContainsInFirstSentence(AIResponse, "nos vemos em breve") ||
+            ContainsInFirstSentence(AIResponse, "volte sempre") || ContainsInFirstSentence(AIResponse, "até depois") || ContainsInFirstSentence(AIResponse, "foi um prazer lhe ajudar") || ContainsInFirstSentence(AIResponse, "foi um prazer te ajudar") ||
+            ContainsInFirstSentence(AIResponse, "foi um prazer ajudar") || ContainsInFirstSentence(AIResponse, "tenha bons estudos!") ||
+            ContainsInFirstSentence(AIResponse, "seja bem-vindo") || ContainsInFirstSentence(AIResponse, "seja bem-vinda"))
+        {
+            anim.SetBool("Hello", true);
+            setEmotion(0);
+        }
 
         //-------------------------------EMOÇÕES DE FELICIDADE, SUCESSO------------------------------------
         if (AIResponse.Contains("muito bem") || AIResponse.Contains("bom trabalho") ||
@@ -132,19 +166,6 @@ public class Rob13Ctrl : MonoBehaviour
             setEmotion(3);
         }
 
-        //Saudação e despedida
-        if (AIResponse.Contains("olá") || AIResponse.Contains("bem vindo") || AIResponse.Contains("oi") ||
-            AIResponse.Contains("bom dia") || AIResponse.Contains("boa tarde") || AIResponse.Contains("boa noite") ||
-            AIResponse.Contains("tchau") || AIResponse.Contains("até mais") || AIResponse.Contains("até logo") ||
-            AIResponse.Contains("até breve") || AIResponse.Contains("até a próxima") || AIResponse.Contains("nos vemos em breve") ||
-            AIResponse.Contains("volte sempre") || AIResponse.Contains("até depois") || AIResponse.Contains("foi um prazer lhe ajudar") || AIResponse.Contains("foi um prazer te ajudar") ||
-            AIResponse.Contains("foi um prazer ajudar") || AIResponse.Contains("tenha bons estudos!") ||
-            AIResponse.Contains("seja bem-vindo") || AIResponse.Contains("seja bem-vinda"))
-        {
-            anim.SetBool("Hello", true);
-            setEmotion(0);
-        }
-
         //procurando
         if (AIResponse.Contains("você deve encontrar") || AIResponse.Contains("você deve descobrir") || AIResponse.Contains("você deve procurar"))
         {
@@ -163,12 +184,6 @@ public class Rob13Ctrl : MonoBehaviour
         robotColorManager.ChangeBodyColor(emoNumber);
         emotionChanger.SetEmotionEyes(emoNumber);
         emotionChanger.SetEmotionMouth(emoNumber);
-    }
-
-    public void Speech3End()
-    {
-        ToggleObjectActiveState();
-        Debug.Log("Anitions is ended!");
     }
 
     IEnumerator PlayAnimationMultipleTimes()
@@ -204,6 +219,19 @@ public class Rob13Ctrl : MonoBehaviour
     {
         setEmotion(0);
         anim.SetBool("reset", true);
+    }
+
+    //p pegar a primeira sentença de uma frase p saber se executa o aceno de tchau e oi
+    public bool ContainsInFirstSentence(string text, string word)
+    {
+        string[] sentences = text.Split(new char[] { '.', '!', '?' }, StringSplitOptions.RemoveEmptyEntries);
+
+        if (sentences.Length > 0)
+        {
+            return sentences[0].Contains(word);
+        }
+
+        return false;
     }
 
 }

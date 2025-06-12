@@ -1,4 +1,3 @@
-
 using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
@@ -11,7 +10,9 @@ public class TextToSpeech : MonoBehaviour
 
     AudioSource audioSource;
     private float previousTime = 0f;
+
     public bool isSpeaking = false;
+    public Rob13Ctrl robotController;
 
     private void Start()
     {
@@ -19,32 +20,44 @@ public class TextToSpeech : MonoBehaviour
         if (audioSource == null)
             audioSource = gameObject.AddComponent<AudioSource>();
     }
+
     private void Update()
     {
-        if (audioSource != null)
+        // Verifica se o áudio começou a tocar e ainda não foi detectado
+        if (audioSource.isPlaying && !isSpeaking)
         {
-            if (audioSource.isPlaying)
-            {
-                // Detecta o início da reprodução
-                if (audioSource.time > 0 && previousTime == 0)
-                {
-                    Debug.Log("AudioSource começou a tocar");
-                    isSpeaking = true;
+            OnAudioStarted();
+        }
 
-                }
-
-                // Detecta o fim da reprodução (ou o momento em que o tempo volta ao zero)
-                if (audioSource.time == 0 && previousTime > 0)
-                {
-                    Debug.Log("AudioSource terminou de tocar");
-                    isSpeaking = false;
-
-                }
-            }
-
-            previousTime = audioSource.time;
+        // Verifica se o áudio terminou
+        if (!audioSource.isPlaying && isSpeaking)
+        {
+            OnAudioFinished();
         }
     }
+
+    // Chama uma função quando o áudio começar a ser reproduzido
+    protected void OnAudioStarted()
+    {
+        Debug.Log("Áudio começou!");
+        isSpeaking = true;
+        if (robotController != null)
+        {
+            robotController.StartTalking(); // Inicia a animação de fala no Rob13Ctrl
+        }
+    }
+
+    // Chama uma função quando o áudio terminar
+    private void OnAudioFinished()
+    {
+        Debug.Log("Áudio terminou!");
+        isSpeaking = false;
+        if (robotController != null)
+        {
+            robotController.StopTalking(); // Para a animação de fala no Rob13Ctrl
+        }
+    }
+
     public void Speak(string text)
     {
         if (string.IsNullOrEmpty(text))
