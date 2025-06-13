@@ -61,25 +61,14 @@ public class Rob13Ctrl : MonoBehaviour
         anim = GetComponent<Animator>();
         controller = GetComponent<CharacterController>();
         anim.SetFloat("speedMultiplier", speed);
-        txtToSpeech = GetComponent<TextToSpeech>();
     }
 
     void Update()
     {
-        // Verificar se já existe uma animação em andamento
-        if (!isAnimationPlaying && isTalking && !anim.GetCurrentAnimatorStateInfo(0).IsName("Talk"))
-        {
-            // Se não houver animação tocando, executa a animação de fala
-            anim.SetBool("Talk", true);
-            ToggleObjectActiveState();
-            setEmotion(0);
-            isAnimationPlaying = true;
-        }
-
-        // Lógica para parar a animação de fala quando o áudio terminar
+       // Lógica para parar a animação de fala quando o áudio terminar
         if (isTalking && !txtToSpeech.isSpeaking)
         {
-            anim.SetBool("Talk", false);
+            anim.SetBool("TalkInLoop", false);
             ToggleObjectActiveState();
             isAnimationPlaying = false;
             isTalking = false;
@@ -91,14 +80,17 @@ public class Rob13Ctrl : MonoBehaviour
         isTalking = true;  // Ativa o estado de fala
         if (!isAnimationPlaying)
         {
-            anim.SetBool("Talk", true); // Inicia animação de fala
+            isTalking = true;
+            anim.SetBool("TalkInLoop", true); // <- aqui ativa a animação em loop
+            ToggleObjectActiveState();
+            setEmotion(0);
         }
     }
 
     public void StopTalking()
     {
         isTalking = false; // Desativa o estado de fala
-        anim.SetBool("Talk", false); // Para a animação de fala
+        anim.SetBool("TalkInLoop", false);
         ToggleObjectActiveState();
         isAnimationPlaying = false; // Define que não há animação em execução
     }

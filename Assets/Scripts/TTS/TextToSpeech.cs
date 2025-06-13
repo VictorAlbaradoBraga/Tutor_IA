@@ -66,6 +66,7 @@ public class TextToSpeech : MonoBehaviour
             return;
         }
 
+        robotController.ChangeEmotionFromSpeech(text);
         StartCoroutine(SpeakCoroutine(text));
     }
 
