@@ -8,7 +8,7 @@ public class NPCVoice : MonoBehaviour
 {
 
     [Header("Configurações da IA")]
-    string apiKey = "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";
+    string apiKey = "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";
     public string model = "llama3-70b-8192";
     public TextToSpeech textToSpeech;
     public ChatBox chatBox;

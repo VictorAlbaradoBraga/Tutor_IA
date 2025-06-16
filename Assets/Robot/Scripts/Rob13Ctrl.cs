@@ -73,6 +73,7 @@ public class Rob13Ctrl : MonoBehaviour
             isAnimationPlaying = false;
             isTalking = false;
         }
+
     }
 
     public void StartTalking()
@@ -164,6 +165,26 @@ public class Rob13Ctrl : MonoBehaviour
             anim.SetBool("LookingFor", true);
             setEmotion(4);
         }
+
+        //negando
+        if (AIResponse.Contains("não é bem isso, mas você está no caminho certo!") ||
+            AIResponse.Contains("não é bem isso, vamos revisar juntos.") ||
+            AIResponse.Contains("boa tentativa, mas acho que você pode chegar mais perto com uma dica.") ||
+            AIResponse.Contains("ainda não acertou, mas continue") ||
+            AIResponse.Contains("ainda não acertou, mas continue tentando! posso te dar uma pista.") ||
+            AIResponse.Contains("errado, mas tudo bem!") ||
+            AIResponse.Contains("quase!") ||
+            AIResponse.Contains("isso não está exatamente certo") ||
+            AIResponse.Contains("não exatamente") ||
+            AIResponse.Contains("não está certo") ||
+            AIResponse.Contains("não foi dessa vez") ||
+            AIResponse.Contains("tem um erro") ||
+            AIResponse.Contains("resposta incorreta") ||
+            AIResponse.Contains("não confere"))
+        {
+            anim.SetBool("No", true);
+        }
+
 
     }
 
