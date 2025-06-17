@@ -9,8 +9,6 @@ public class TextToSpeech : MonoBehaviour
     [SerializeField] private string apiKey = "AIzaSyCRStxPkj-b0ufYOrLemn3mvKLO_y2LTe0"; // Sua API Key do Google Cloud
 
     AudioSource audioSource;
-    private float previousTime = 0f;
-
     public bool isSpeaking = false;
     public Rob13Ctrl robotController;
 

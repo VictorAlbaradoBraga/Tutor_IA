@@ -84,7 +84,7 @@ public class Rob13Ctrl : MonoBehaviour
             isTalking = true;
             anim.SetBool("TalkInLoop", true); // <- aqui ativa a animação em loop
             ToggleObjectActiveState();
-            setEmotion(0);
+            SetEmotion(0);
         }
     }
 
@@ -111,7 +111,7 @@ public class Rob13Ctrl : MonoBehaviour
             ContainsInFirstSentence(AIResponse, "seja bem-vindo") || ContainsInFirstSentence(AIResponse, "seja bem-vinda"))
         {
             anim.SetBool("Hello", true);
-            setEmotion(0);
+            SetEmotion(0);
         }
 
         //-------------------------------EMOÇÕES DE FELICIDADE, SUCESSO------------------------------------
@@ -120,7 +120,7 @@ public class Rob13Ctrl : MonoBehaviour
             AIResponse.Contains("excelente"))
         {
             anim.SetBool("Win", true);
-            setEmotion(1);
+            SetEmotion(1);
             StartCoroutine(PlayAnimationMultipleTimes());
         }
 
@@ -132,7 +132,7 @@ public class Rob13Ctrl : MonoBehaviour
         {
             animationName = "Dance0";
             robotColorManager.isRainbowCycles = true;
-            setEmotion(1);
+            SetEmotion(1);
             StartCoroutine(PlayAnimationMultipleTimes());
         }
 
@@ -145,7 +145,7 @@ public class Rob13Ctrl : MonoBehaviour
         {
             animationName = "Dance1";
             robotColorManager.isRainbowCycles = true;
-            setEmotion(1);
+            SetEmotion(1);
             StartCoroutine(PlayAnimationMultipleTimes());
         }
 
@@ -156,14 +156,14 @@ public class Rob13Ctrl : MonoBehaviour
         if (AIResponse.Contains("eu não sei") || AIResponse.Contains("não entendi"))
         {
             anim.SetBool("DontKnow", true);
-            setEmotion(3);
+            SetEmotion(3);
         }
 
         //procurando
         if (AIResponse.Contains("você deve encontrar") || AIResponse.Contains("você deve descobrir") || AIResponse.Contains("você deve procurar"))
         {
             anim.SetBool("LookingFor", true);
-            setEmotion(4);
+            SetEmotion(4);
         }
 
         //negando
@@ -188,7 +188,7 @@ public class Rob13Ctrl : MonoBehaviour
 
     }
 
-    public void setEmotion(int emoNumber)
+    public void SetEmotion(int emoNumber)
     {
         if (battleIsActive)
         {
@@ -203,13 +203,14 @@ public class Rob13Ctrl : MonoBehaviour
     {
         for (int i = 0; i < playCount; i++)
         {
+            Debug.Log("Animation name: " + animationName);
             anim.SetBool(animationName, true);
             yield return new WaitForSeconds(playCount);
         }
         anim.SetBool(animationName, false);
         robotColorManager.isRainbowCycles = false;
         anim.SetBool("reset", true);
-        resetEmo();
+        ResetEmo();
         Debug.Log("Animation Done");
     }
 
@@ -228,9 +229,9 @@ public class Rob13Ctrl : MonoBehaviour
         }
     }
 
-    void resetEmo()
+    void ResetEmo()
     {
-        setEmotion(0);
+        SetEmotion(0);
         anim.SetBool("reset", true);
     }
 
